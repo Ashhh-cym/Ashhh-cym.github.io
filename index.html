@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zhanghe Zheng - Portfolio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            padding: 2rem;
+            background: transparent;
+            min-height: 300vh;
+            position: relative;
+        }
+
+        .video-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        #bgVideo {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(1.1);
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            opacity: 0.7;
+            filter: contrast(1.15) brightness(1.1);
+            will-change: transform;
+            backface-visibility: hidden;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4rem;
+            position: fixed;
+            top: 2rem;
+            left: 2rem;
+            right: 2rem;
+            z-index: 100;
+            background: transparent;
+            padding: 1rem;
+        }
+
+        .logo {
+            font-size: 6.468rem;
+            font-weight: 400;
+            text-decoration: none;
+            color: #111;
+            line-height: 1.2;
+        }
+
+        .nav-links {
+            display: none; /* 隐藏导航链接 */
+        }
+
+        .project-titles, .bottom-titles {
+            display: none; /* 隐藏项目标题 */
+        }
+
+        .project-image {
+            width: 100%;
+            height: 70vh;
+            object-fit: cover;
+            margin: 2rem 0;
+        }
+
+        .text-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-top: 16rem;
+            position: relative;
+            gap: 1rem;
+        }
+
+        .text-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .text-item {
+            font-size: 4rem;
+            font-weight: 300;
+            opacity: 0.8;
+            transition: all 0.5s ease;
+            position: relative;
+            cursor: pointer;
+            color: #000;
+        }
+
+        .text-item:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .text-link {
+            color: #000;
+            text-decoration: none;
+        }
+
+        .separator {
+            font-size: 14.8rem;
+            color: #000;
+            font-weight: 200;
+            transform: scale(0.8, 1);
+            opacity: 0.8;
+        }
+
+        .inspiration-wrapper, .story-wrapper, .explore-wrapper {
+            position: relative;
+            display: inline-block;
+            z-index: 1; /* 确保文字在图片上方 */
+        }
+
+        .inspiration-image, .story-image, .explore-image, .works-image {
+            position: fixed;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+            pointer-events: none;
+            max-width: 300px;
+            transform: translate(-50%, -50%);
+            z-index: 0; /* 确保在文字下方 */
+            left: 50%;
+            top: 50%;
+        }
+
+        .inspiration-wrapper:hover .inspiration-image,
+        .story-wrapper:hover .story-image,
+        .explore-wrapper:hover .explore-image {
+            opacity: 1;
+            display: block;
+        }
+
+        /* 新的滚动指示器样式 */
+        .scroll-indicator {
+            position: fixed;
+            right: 40px;
+            top: 50%;
+            transform: translateY(-50%);
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            gap: 12px;
+            z-index: 1000;
+        }
+
+        .scroll-line {
+            width: 40px;
+            height: 1px;
+            background-color: rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .scroll-line.active {
+            background-color: rgba(0, 0, 0, 0.9);
+            height: 2px;
+        }
+
+        .scroll-line.passed {
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+
+        .curved-line-container {
+            position: absolute;
+            top: calc(100% + 1rem); /* 从文字下方1rem开始 */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            pointer-events: none;
+        }
+
+        .curved-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 0;
+            background: repeating-linear-gradient(
+                to bottom,
+                rgba(0, 0, 0, 0.5) 0,
+                rgba(0, 0, 0, 0.5) 4px,
+                transparent 4px,
+                transparent 8px
+            );
+            transition: height 0.3s ease;
+        }
+
+        .curved-line-path {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform-origin: top center;
+        }
+
+        .dont-scroll {
+            position: relative;
+            text-align: center;
+            font-size: 4.5276rem;
+            font-weight: 400;
+            color: #111;
+            opacity: 0.8;
+            margin-top: 15rem !important; /* 从35rem改为15rem，再向上移动20rem */
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .dont-scroll img {
+            width: 22.5rem;
+            height: 22.5rem;
+            margin-right: 3rem;
+            object-fit: cover;
+            border-radius: 50%;
+            will-change: transform;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+            transition: transform 0.1s ease;
+            background: transparent;
+            position: relative;
+            left: -2rem;
+        }
+
+        .dont-scroll img:hover {
+            animation: rotate3D 8s linear infinite;
+        }
+
+        @keyframes rotate3D {
+            0% {
+                transform: rotate3d(1, 1, 1, 0deg);
+            }
+            100% {
+                transform: rotate3d(1, 1, 1, 360deg);
+            }
+        }
+
+        @keyframes curveAnimation {
+            0% {
+                d: path('M0,0 Q0,50 0,100');
+            }
+            50% {
+                d: path('M0,0 Q20,50 0,100');
+            }
+            100% {
+                d: path('M0,0 Q-20,50 0,100');
+            }
+        }
+
+        .works-wrapper {
+            position: relative;
+            display: inline-block;
+            z-index: 2; /* 确保文字在图片上方 */
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .nav-item {
+            color: #000;
+            text-decoration: none;
+            font-size: 2rem;
+            font-family: Arial, sans-serif;
+            transition: opacity 0.3s ease;
+        }
+
+        .nav-item:hover {
+            opacity: 0.7;
+        }
+
+        .separator {
+            color: #000;
+            font-size: 2rem;
+        }
+
+        .story-wrapper {
+            position: relative;
+            display: inline-block;
+            z-index: 2; /* 确保文字在图片上方 */
+        }
+
+        .story-image {
+            position: fixed;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+            pointer-events: none;
+            max-width: 300px;
+            transform: translate(-50%, -50%);
+            z-index: 0;
+            left: 50%;
+            top: 50%;
+            display: block !important; /* 确保图片始终显示 */
+        }
+
+        .story-wrapper:hover .story-image {
+            opacity: 1;
+            display: block !important;
+        }
+
+        .inspiration-wrapper {
+            position: relative;
+            display: inline-block;
+            z-index: 1;
+        }
+
+        .inspiration-image {
+            position: fixed;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+            pointer-events: none;
+            max-width: 300px;
+            transform: translate(-50%, -50%);
+            z-index: 0; /* 确保在文字下方 */
+            left: 50%;
+            top: 50%;
+        }
+
+        .inspiration-wrapper:hover .inspiration-image {
+            opacity: 1;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="video-background">
+        <video id="bgVideo" autoplay muted loop playsinline>
+            <source src="videos/background.mp4" type="video/mp4">
+        </video>
+    </div>
+
+    <!-- 新的滚动指示器 -->
+    <div class="scroll-indicator">
+        <div class="scroll-line"></div>
+        <div class="scroll-line"></div>
+        <div class="scroll-line"></div>
+        <div class="scroll-line"></div>
+        <div class="scroll-line"></div>
+        <div class="scroll-line"></div>
+        <div class="scroll-line"></div>
+        <div class="scroll-line"></div>
+        <div class="scroll-line"></div>
+        <div class="scroll-line"></div>
+        <div class="scroll-line"></div>
+        <div class="scroll-line"></div>
+        <div class="scroll-line"></div>
+        <div class="scroll-line"></div>
+        <div class="scroll-line"></div>
+        <div class="scroll-line"></div>
+        <div class="scroll-line"></div>
+        <div class="scroll-line"></div>
+        <div class="scroll-line"></div>
+        <div class="scroll-line"></div>
+        <div class="scroll-line"></div>
+        <div class="scroll-line"></div>
+        <div class="scroll-line"></div>
+        <div class="scroll-line"></div>
+        <div class="scroll-line"></div>
+        <div class="scroll-line"></div>
+        <div class="scroll-line"></div>
+        <div class="scroll-line"></div>
+        <div class="scroll-line"></div>
+        <div class="scroll-line"></div>
+        <div class="scroll-line"></div>
+        <div class="scroll-line"></div>
+        <div class="scroll-line"></div>
+        <div class="scroll-line"></div>
+        <div class="scroll-line"></div>
+    </div>
+
+    <div class="text-container">
+        <div class="text-row">
+            <div class="text-item">
+                <a href="memory.html" class="text-link">Memory</a>
+                <span class="separator">/</span>
+            </div>
+            <div class="text-item inspiration-wrapper">
+                <a href="inspiration.html" class="text-link">Inspiration</a>
+                <img src="images/sketch.jpg" alt="Inspiration" class="inspiration-image">
+                <span class="separator">/</span>
+            </div>
+            <div class="text-item">
+                <a href="explore.html" class="text-link">Explore</a>
+            </div>
+        </div>
+        <div class="text-row">
+            <div class="text-item story-wrapper">
+                <a href="story.html" class="text-link">Story</a>
+                <img src="images/story.jpg" alt="Story" class="story-image">
+                <span class="separator">/</span>
+            </div>
+            <div class="text-item works-wrapper">
+                <a href="works.html" class="text-link">Works</a>
+                <img src="images/explore.jpg" alt="Works Image" class="works-image">
+            </div>
+        </div>
+    </div>
+
+    <div class="dont-scroll">
+        <img src="images/profile2.jpg" alt="Profile" id="profileImage">
+        <span>Don't scroll down</span>
+    </div>
+
+    <!-- 添加新的复制部分 -->
+    <div class="dont-scroll bottom" style="margin-top: 18rem;">
+        <img src="images/profile.jpg" alt="Profile" id="profileImageCopy">
+        <span>I told you</span>
+    </div>
+
+    <nav>
+        <a href="/" class="logo">Zhanghe Zheng</a>
+    </nav>
+
+    <script>
+        // 添加 Perlin 噪声函数
+        const noise = (function() {
+            const permutation = [];
+            const p = new Array(512);
+            
+            for(let i = 0; i < 256; i++) {
+                permutation[i] = Math.floor(Math.random() * 256);
+            }
+            
+            for(let i = 0; i < 512; i++) {
+                p[i] = permutation[i & 255];
+            }
+
+            function fade(t) {
+                return t * t * t * (t * (t * 6 - 15) + 10);
+            }
+
+            function lerp(t, a, b) {
+                return a + t * (b - a);
+            }
+
+            function grad(hash, x, y, z) {
+                const h = hash & 15;
+                const u = h < 8 ? x : y;
+                const v = h < 4 ? y : h === 12 || h === 14 ? x : z;
+                return ((h & 1) === 0 ? u : -u) + ((h & 2) === 0 ? v : -v);
+            }
+
+            return function(x, y, z) {
+                const X = Math.floor(x) & 255;
+                const Y = Math.floor(y) & 255;
+                const Z = Math.floor(z) & 255;
+
+                x -= Math.floor(x);
+                y -= Math.floor(y);
+                z -= Math.floor(z);
+
+                const u = fade(x);
+                const v = fade(y);
+                const w = fade(z);
+
+                const A = p[X] + Y;
+                const AA = p[A] + Z;
+                const AB = p[A + 1] + Z;
+                const B = p[X + 1] + Y;
+                const BA = p[B] + Z;
+                const BB = p[B + 1] + Z;
+
+                return lerp(w,
+                    lerp(v,
+                        lerp(u, grad(p[AA], x, y, z), grad(p[BA], x - 1, y, z)),
+                        lerp(u, grad(p[AB], x, y - 1, z), grad(p[BB], x - 1, y - 1, z))
+                    ),
+                    lerp(v,
+                        lerp(u, grad(p[AA + 1], x, y, z - 1), grad(p[BA + 1], x - 1, y, z - 1)),
+                        lerp(u, grad(p[AB + 1], x, y - 1, z - 1), grad(p[BB + 1], x - 1, y - 1, z - 1))
+                    )
+                );
+            }
+        })();
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const img = document.querySelector('.project-image');
+            
+            if (img) {
+                img.style.opacity = '0';
+                img.style.transition = 'opacity 0.5s ease';
+                
+                img.onload = function() {
+                    img.style.opacity = '1';
+                }
+            }
+
+            const video = document.querySelector('video');
+            video.play().catch(function(error) {
+                console.log("Video autoplay failed:", error);
+            });
+
+            // 新的滚动指示器逻辑
+            const scrollLines = document.querySelectorAll('.scroll-line');
+            const totalLines = scrollLines.length;
+
+            function updateScrollIndicator() {
+                const windowHeight = window.innerHeight;
+                const documentHeight = Math.max(
+                    document.documentElement.scrollHeight,
+                    document.body.scrollHeight
+                );
+                const scrolled = window.pageYOffset || document.documentElement.scrollTop;
+                const scrollableHeight = documentHeight - windowHeight;
+                const scrollPercentage = Math.min(scrolled / scrollableHeight, 1);
+                
+                // 计算当前活动线条
+                const currentLine = Math.floor(scrollPercentage * totalLines);
+                
+                // 更新所有线条状态
+                scrollLines.forEach((line, index) => {
+                    if (index < currentLine) {
+                        line.classList.add('passed');
+                        line.classList.remove('active');
+                    } else if (index === currentLine) {
+                        line.classList.add('active');
+                        line.classList.remove('passed');
+                    } else {
+                        line.classList.remove('passed', 'active');
+                    }
+                });
+            }
+
+            // 使用 requestAnimationFrame 优化滚动性能
+            let ticking = false;
+            window.addEventListener('scroll', () => {
+                if (!ticking) {
+                    requestAnimationFrame(() => {
+                        updateScrollIndicator();
+                        ticking = false;
+                    });
+                    ticking = true;
+                }
+            });
+
+            window.addEventListener('resize', updateScrollIndicator);
+            updateScrollIndicator();
+
+            // Story 图片交互效果
+            const storyWrapper = document.querySelector('.story-wrapper');
+            const storyImage = document.querySelector('.story-image');
+            let isHoveringStory = false;
+            let rafIdStory = null;
+
+            function updateStoryImagePosition(e) {
+                if (!isHoveringStory) {
+                    cancelAnimationFrame(rafIdStory);
+                    return;
+                }
+
+                const rect = storyWrapper.getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+                
+                storyImage.style.left = `${centerX}px`;
+                storyImage.style.top = `${centerY}px`;
+
+                rafIdStory = requestAnimationFrame(() => updateStoryImagePosition(e));
+            }
+
+            function handleStoryMouseEnter(e) {
+                isHoveringStory = true;
+                storyImage.style.opacity = '1';
+                updateStoryImagePosition(e);
+            }
+
+            function handleStoryMouseLeave() {
+                isHoveringStory = false;
+                storyImage.style.opacity = '0';
+                if (rafIdStory) {
+                    cancelAnimationFrame(rafIdStory);
+                }
+            }
+
+            storyWrapper.addEventListener('mouseenter', handleStoryMouseEnter);
+            storyWrapper.addEventListener('mouseleave', handleStoryMouseLeave);
+            storyWrapper.addEventListener('mousemove', updateStoryImagePosition);
+
+            // 预加载图片
+            const preloadImage = new Image();
+            preloadImage.src = storyImage.src;
+
+            // Explore 图片交互效果
+            const exploreWrapper = document.querySelector('.explore-wrapper');
+            const exploreText = exploreWrapper.querySelector('.text-item');
+            const exploreImage = exploreWrapper.querySelector('.explore-image');
+            
+            if (exploreWrapper && exploreImage) {
+                let isHovering = false;
+                let rafId = null;
+
+                function updateExploreImagePosition(e) {
+                    if (!isHovering) {
+                        cancelAnimationFrame(rafId);
+                        return;
+                    }
+                    
+                    const rect = exploreWrapper.getBoundingClientRect();
+                    const centerX = rect.left + rect.width / 2;
+                    const centerY = rect.top + rect.height / 2;
+                    
+                    exploreImage.style.left = `${centerX}px`;
+                    exploreImage.style.top = `${centerY}px`;
+
+                    rafId = requestAnimationFrame(() => updateExploreImagePosition(e));
+                }
+
+                function handleMouseEnter(e) {
+                    isHovering = true;
+                    exploreImage.style.opacity = '1';
+                    updateExploreImagePosition(e);
+                }
+
+                function handleMouseLeave() {
+                    isHovering = false;
+                    exploreImage.style.opacity = '0';
+                    if (rafId) {
+                        cancelAnimationFrame(rafId);
+                    }
+                }
+
+                exploreWrapper.addEventListener('mouseenter', handleMouseEnter);
+                exploreWrapper.addEventListener('mouseleave', handleMouseLeave);
+                exploreWrapper.addEventListener('mousemove', updateExploreImagePosition);
+
+                // 预加载图片
+                const preloadImage = new Image();
+                preloadImage.src = exploreImage.src;
+            }
+
+            // 添加图片3D旋转效果
+            const profileImage = document.getElementById('profileImage');
+            let isRotating = false;
+
+            profileImage.addEventListener('mouseenter', () => {
+                if (!isRotating) {
+                    profileImage.style.animation = 'rotate3D 8s linear infinite';
+                    isRotating = true;
+                }
+            });
+
+            profileImage.addEventListener('mouseleave', () => {
+                profileImage.style.animation = 'none';
+                isRotating = false;
+            });
+
+            // 为复制的图片添加相同的3D旋转效果
+            const profileImageCopy = document.getElementById('profileImageCopy');
+            let isRotatingCopy = false;
+
+            profileImageCopy.addEventListener('mouseenter', () => {
+                if (!isRotatingCopy) {
+                    profileImageCopy.style.animation = 'rotate3D 8s linear infinite';
+                    isRotatingCopy = true;
+                }
+            });
+
+            profileImageCopy.addEventListener('mouseleave', () => {
+                profileImageCopy.style.animation = 'none';
+                isRotatingCopy = false;
+            });
+
+            // 修改旋转动画控制
+            const rotatingImg = document.querySelector('.dont-scroll img');
+            let lastMousePos = { x: 0, y: 0 };
+            let mouseVelocity = { x: 0, y: 0 };
+            let baseRotationSpeed = 0.5;
+            let currentRotation = { x: 0, y: 0, z: 0 };
+            let isAnimating = false;
+            let lastTime = performance.now();
+
+            function updateRotation(currentTime) {
+                const deltaTime = (currentTime - lastTime) / 1000;
+                lastTime = currentTime;
+
+                // 计算鼠标速度对旋转的影响
+                const velocityMagnitude = Math.sqrt(
+                    mouseVelocity.x * mouseVelocity.x + 
+                    mouseVelocity.y * mouseVelocity.y
+                );
+                
+                // 根据鼠标速度调整旋转速度，但保持最小速度
+                const rotationSpeed = baseRotationSpeed + velocityMagnitude * 0.1;
+
+                // 更新旋转角度
+                currentRotation.x += rotationSpeed * 30 * deltaTime;
+                currentRotation.y += rotationSpeed * 30 * deltaTime;
+                currentRotation.z += rotationSpeed * 30 * deltaTime;
+
+                // 应用旋转
+                rotatingImg.style.transform = `
+                    perspective(1000px)
+                    rotate3d(1, 1, 1, ${currentRotation.x}deg)
+                `;
+
+                // 逐渐减小鼠标速度的影响
+                mouseVelocity.x *= 0.95;
+                mouseVelocity.y *= 0.95;
+
+                requestAnimationFrame(updateRotation);
+            }
+
+            document.addEventListener('mousemove', (e) => {
+                const currentMousePos = { x: e.clientX, y: e.clientY };
+                
+                // 计算鼠标速度
+                mouseVelocity = {
+                    x: (currentMousePos.x - lastMousePos.x) * 0.1,
+                    y: (currentMousePos.y - lastMousePos.y) * 0.1
+                };
+                
+                lastMousePos = currentMousePos;
+
+                // 如果动画还没开始，就开始动画
+                if (!isAnimating) {
+                    isAnimating = true;
+                    requestAnimationFrame(updateRotation);
+                }
+            });
+
+            // 初始化动画
+            requestAnimationFrame(updateRotation);
+
+            const worksWrapper = document.querySelector('.works-wrapper');
+            const worksImage = document.querySelector('.works-image');
+            let isHovering = false;
+            let rafId = null;
+
+            function updateWorksImagePosition(e) {
+                if (!isHovering) {
+                    cancelAnimationFrame(rafId);
+                    return;
+                }
+
+                const rect = worksWrapper.getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+                
+                worksImage.style.left = `${centerX}px`;
+                worksImage.style.top = `${centerY}px`;
+
+                rafId = requestAnimationFrame(() => updateWorksImagePosition(e));
+            }
+
+            function handleMouseEnter(e) {
+                isHovering = true;
+                worksImage.style.opacity = '1';
+                updateWorksImagePosition(e);
+            }
+
+            function handleMouseLeave() {
+                isHovering = false;
+                worksImage.style.opacity = '0';
+                if (rafId) {
+                    cancelAnimationFrame(rafId);
+                }
+            }
+
+            worksWrapper.addEventListener('mouseenter', handleMouseEnter);
+            worksWrapper.addEventListener('mouseleave', handleMouseLeave);
+            worksWrapper.addEventListener('mousemove', updateWorksImagePosition);
+
+            // 修改 story 和 works 图片的定位逻辑
+            function updateImagePosition(wrapper, image) {
+                const rect = wrapper.getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+                
+                image.style.left = `${centerX}px`;
+                image.style.top = `${centerY}px`;
+                image.style.display = 'block'; // 确保图片显示
+            }
+
+            // 更新 story 图片的交互逻辑
+            storyWrapper.addEventListener('mouseenter', (e) => {
+                isHoveringStory = true;
+                storyImage.style.opacity = '1';
+                storyImage.style.display = 'block';
+                updateImagePosition(storyWrapper, storyImage);
+            });
+
+            // 更新 works 图片的交互逻辑
+            worksWrapper.addEventListener('mouseenter', (e) => {
+                isHovering = true;
+                worksImage.style.opacity = '1';
+                worksImage.style.display = 'block';
+                updateImagePosition(worksWrapper, worksImage);
+            });
+        });
+    </script>
+</body>
+</html> 
